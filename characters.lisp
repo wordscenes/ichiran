@@ -73,12 +73,12 @@
   (gethash cc *dakuten-hash* cc))
 
 (defparameter *punctuation-marks*
-  '("【" " [" "】" "] "
-    "、" ", " "，" ", "
-    "。" ". " "・・・" "... " "・" " " "　" " "
-    "「" " \"" "」" "\" " "゛" "\""
-    "『" " «"  "』" "» "
-    "〜" " - " "：" ": " "！" "! " "？" "? " "；" "; "))
+  '("【" "[" "】" "]"
+    "、" "," "，" ","
+    "。" "." "・・・" "..." "・" " " "　" " "
+    "「" "\"" "」" "\"" "゛" "\""
+    "『" "«"  "』" "»"
+    "〜" "-" "：" ":" "！" "!" "？" "?" "；" ";"))
 
 (defun dakuten-join (dakuten-hash char)
   (loop for (cc . ccd) in (alexandria:hash-table-alist dakuten-hash)
