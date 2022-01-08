@@ -73,12 +73,12 @@
   (gethash cc *dakuten-hash* cc))
 
 (defparameter *punctuation-marks*
-  '("【" "[" "】" "]"
-    "、" "," "，" ","
-    "。" "." "・・・" "..." "・" " " "　" " "
-    "「" "\"" "」" "\"" "゛" "\""
-    "『" "«"  "』" "»"
-    "〜" "-" "：" ":" "！" "!" "？" "?" "；" ";"))
+  '("【" "【" "】" "】"
+    "、" "、" "，" "，"
+    "。" "。" "・・・" "・・・" "・" "・" "　" "　"
+    "「" "「" "」" "\" " "゛" "゛"
+    "『" "『"  "』" "』"
+    "〜" "〜" "：" "：" "！" "！" "？" "？" "；" "；"))
 
 (defun dakuten-join (dakuten-hash char)
   (loop for (cc . ccd) in (alexandria:hash-table-alist dakuten-hash)
@@ -99,73 +99,24 @@
                "･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ"))
 
 (defparameter *normal-chars*
-  (concatenate 'string "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&()*+/<=>?@[]^_`{|}~"
-               "・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゛゜"))
+  (concatenate 'string "０１２３４５６７８９ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ＃＄％＆（）＊＋／〈＝〉？＠［］＾＿‘｛｜｝～"
+               "･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ"))
 
 (defparameter *katakana-regex* "[ァ-ヺヽヾー]")
 (defparameter *katakana-uniq-regex* "[ァ-ヺヽヾ]")
 (defparameter *hiragana-regex* "[ぁ-ゔゝゞー]")
-(defparameter *kanji-regex* "[々ヶ〆一-龯]")
-(defparameter *kanji-char-regex* "[一-龯]")
+(defparameter *kanji-regex* "[々ヶ〆一いち-龯******]")
+(defparameter *kanji-char-regex* "[一いち-龯******]")
 
-(defparameter *nonword-regex* "[^々ヶ〆一-龯ァ-ヺヽヾぁ-ゔゝゞー〇]")
-(defparameter *numeric-regex* "[0-9０-９〇一二三四五六七八九零壱弐参拾十百千万億兆京]")
-(defparameter *num-word-regex* "[0-9０-９〇々ヶ〆一-龯ァ-ヺヽヾぁ-ゔゝゞー]")
-(defparameter *word-regex* "[々ヶ〆一-龯ァ-ヺヽヾぁ-ゔゝゞー〇]")
+(defparameter *nonword-regex* "[^々ヶ〆一いち-龯******ァ-ヺヽヾぁ-ゔゝゞー〇]")
+(defparameter *numeric-regex* "[0-9０-９〇一いち二に三さん四よん五ご六ろく七なな八九零壱弐参拾十百千万億兆京*]")
+(defparameter *num-word-regex* "[0-9０-９〇々ヶ〆一いち-龯******ァ-ヺヽヾぁ-ゔゝゞー]")
+(defparameter *word-regex* "[々ヶ〆一いち-龯******ァ-ヺヽヾぁ-ゔゝゞー〇]")
 (defparameter *digit-regex* "[0-9０-９〇]")
 (defparameter *decimal-point-regex* "[.,]")
 
 (defparameter *basic-split-regex*
-  (format nil "((?:(?<!~a|~a)~a+|~a)~a*~a|~a)"
-          *decimal-point-regex* *digit-regex* *digit-regex*
-          *word-regex* *num-word-regex* *word-regex* *word-regex*))
-
-(defparameter *char-class-regex-mapping*
-  `((:katakana ,*katakana-regex*)
-    (:katakana-uniq ,*katakana-uniq-regex*)
-    (:hiragana ,*hiragana-regex*)
-    (:kanji ,*kanji-regex*)
-    (:kanji-char ,*kanji-char-regex*)
-    (:kana ,(format nil "(~a|~a)" *katakana-regex* *hiragana-regex*))
-    (:traditional ,(format nil "(~a|~a)" *hiragana-regex* *kanji-regex*))
-    (:nonword ,*nonword-regex*)
-    (:number ,*numeric-regex*)))
-
-(deftype char-class () '(member :katakana :katakana-uniq
-                         :hiragana :kanji :kanji-char
-                         :kana :traditional :nonword :number))
-
-(defparameter *char-scanners*
-  (mapcar (lambda (pair) (cons (car pair) (ppcre:create-scanner (format nil "^~a+$" (cadr pair)))))
-          *char-class-regex-mapping*))
-
-(defparameter *char-scanners-inner*
-  (mapcar (lambda (pair)
-            (cons (car pair) (ppcre:create-scanner `(:greedy-repetition 1 nil (:regex ,@(cdr pair))))))
-          *char-class-regex-mapping*))
-
-(defun test-word (word char-class)
-  (declare (type char-class char-class))
-  (let ((regex (cdr (assoc char-class *char-scanners*))))
-    (ppcre:scan regex word)))
-
-(defun count-char-class (word char-class)
-  (declare (type char-class char-class))
-  (let ((cnt 0)
-        (regex (cadr (assoc char-class *char-class-regex-mapping*))))
-    (ppcre:do-matches (s e regex word cnt)
-      (incf cnt))))
-
-(defun collect-char-class (word char-class)
-  (declare (type char-class char-class))
-  (let ((regex (cadr (assoc char-class *char-class-regex-mapping*)))
-        result)
-    (ppcre:do-matches-as-strings (s regex word (nreverse result))
-      (push s result))))
-
-(defun sequential-kanji-positions (word &optional (offset 0))
-  (let (positions)
-    (ppcre:do-matches (s e "(?=[々一-龯][々一-龯])" word)
+  (format nil "((?:(?一いち-龯******-龯******])" word)
       (push (+ s 1 offset) positions))
     (nreverse positions)))
 
