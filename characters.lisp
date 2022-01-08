@@ -73,12 +73,12 @@
   (gethash cc *dakuten-hash* cc))
 
 (defparameter *punctuation-marks*
-  '("【" "[" "】" "]"
-    "、" "," "，" ","
-    "。" "." "・・・" "..." "・" " " "　" " "
-    "「" "\"" "」" "\"" "゛" "\""
-    "『" "«"  "』" "»"
-    "〜" "-" "：" ":" "！" "!" "？" "?" "；" ";"))
+  '("【" "【" "】" "】"
+    "、" "、" "，" "，"
+    "。" "。" "・・・" "・・・" "・" "・" "　" "　"
+    "「" "「" "」" "\" " "゛" "゛"
+    "『" "『" "』" "』"
+    "〜" "〜" "：" "：" "！" "！" "？" "？" "；" "；"))
 
 (defun dakuten-join (dakuten-hash char)
   (loop for (cc . ccd) in (alexandria:hash-table-alist dakuten-hash)
@@ -99,8 +99,8 @@
                "･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ"))
 
 (defparameter *normal-chars*
-  (concatenate 'string "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&()*+/<=>?@[]^_`{|}~"
-               "・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゛゜"))
+  (concatenate 'string "０１２３４５６７８９ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ＃＄％＆（）＊＋／〈＝〉？＠［］＾＿‘｛｜｝～"
+               "･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ"))
 
 (defparameter *katakana-regex* "[ァ-ヺヽヾー]")
 (defparameter *katakana-uniq-regex* "[ァ-ヺヽヾ]")
